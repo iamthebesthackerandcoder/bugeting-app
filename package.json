@@ -1,0 +1,60 @@
+{
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "description": "A budgeting app built with Electron",
+  "homepage": "https://github.com/iamthebesthackerandcoder/todo#readme",
+  "bugs": {
+    "url": "https://github.com/iamthebesthackerandcoder/todo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/iamthebesthackerandcoder/todo.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.example.my-electron-app",
+    "productName": "My Electron App",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "renderer.js",
+      "styles.css",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  },
+  "dependencies": {
+    "chart.js": "^4.5.0"
+  }
+}
