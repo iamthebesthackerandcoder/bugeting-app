@@ -1,9 +1,50 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 
 // Keep a global reference of the window object
 let mainWindow;
+
+// Configure auto-updater
+autoUpdater.checkForUpdatesAndNotify();
+
+// Auto-updater event handlers
+autoUpdater.on('checking-for-update', () => {
+  console.log('Checking for update...');
+});
+
+autoUpdater.on('update-available', (info) => {
+  console.log('Update available.');
+  if (mainWindow) {
+    mainWindow.webContents.send('update-available', info);
+  }
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  console.log('Update not available.');
+});
+
+autoUpdater.on('error', (err) => {
+  console.log('Error in auto-updater. ' + err);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  console.log(log_message);
+  if (mainWindow) {
+    mainWindow.webContents.send('download-progress', progressObj);
+  }
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  console.log('Update downloaded');
+  if (mainWindow) {
+    mainWindow.webContents.send('update-downloaded', info);
+  }
+});
 
 // Data storage paths
 const userDataPath = app.getPath('userData');
@@ -167,6 +208,13 @@ function createMenu() {
       label: 'Help',
       submenu: [
         {
+          label: 'Check for Updates',
+          click: () => {
+            autoUpdater.checkForUpdatesAndNotify();
+          }
+        },
+        { type: 'separator' },
+        {
           label: 'About',
           click: () => {
             dialog.showMessageBox(mainWindow, {
@@ -272,4 +320,13 @@ ipcMain.handle('load-app-settings', async () => {
 ipcMain.handle('show-message-box', async (event, options) => {
   const result = await dialog.showMessageBox(mainWindow, options);
   return result;
+});
+
+// Auto-updater IPC handlers
+ipcMain.handle('check-for-updates', () => {
+  autoUpdater.checkForUpdatesAndNotify();
+});
+
+ipcMain.handle('restart-and-install', () => {
+  autoUpdater.quitAndInstall();
 });

@@ -90,6 +90,9 @@ async function init() {
 
     // Setup periodic checks
     setInterval(checkRecurringItems, 60000); // Check every minute
+
+    // Setup auto-updater event listeners
+    setupAutoUpdater();
 }
 
 // Setup event listeners
@@ -1584,6 +1587,127 @@ window.addAllRecurringItems = function () {
     setStatus(`Added ${dueItems.length} recurring items`);
     document.querySelector('.modal').remove();
 };
+
+// Auto-updater setup
+function setupAutoUpdater() {
+    // Listen for update events
+    window.electronAPI.onUpdateAvailable((event, info) => {
+        showUpdateNotification('Update Available', `Version ${info.version} is available. It will be downloaded in the background.`);
+    });
+
+    window.electronAPI.onDownloadProgress((event, progressObj) => {
+        const percent = Math.round(progressObj.percent);
+        showUpdateNotification('Downloading Update', `Download progress: ${percent}%`, false);
+    });
+
+    window.electronAPI.onUpdateDownloaded((event, info) => {
+        showUpdateNotification(
+            'Update Ready',
+            `Version ${info.version} has been downloaded. Restart the app to apply the update.`,
+            true,
+            'Restart Now',
+            () => {
+                window.electronAPI.restartAndInstall();
+            }
+        );
+    });
+}
+
+function showUpdateNotification(title, message, persistent = false, buttonText = null, buttonAction = null) {
+    // Remove existing update notifications
+    const existingNotifications = document.querySelectorAll('.update-notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'update-notification';
+    notification.innerHTML = `
+        <div class="update-notification-content">
+            <div class="update-notification-header">
+                <strong>${title}</strong>
+                ${!persistent ? '<button class="update-notification-close">&times;</button>' : ''}
+            </div>
+            <div class="update-notification-message">${message}</div>
+            ${buttonText ? `<button class="update-notification-action">${buttonText}</button>` : ''}
+        </div>
+    `;
+
+    // Add styles if not already present
+    if (!document.querySelector('#update-notification-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'update-notification-styles';
+        styles.textContent = `
+            .update-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 15px;
+                border-radius: 5px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                z-index: 10000;
+                max-width: 350px;
+                animation: slideIn 0.3s ease-out;
+            }
+            .update-notification-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .update-notification-close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+                padding: 0;
+                width: 20px;
+                height: 20px;
+            }
+            .update-notification-action {
+                background: rgba(255,255,255,0.2);
+                border: 1px solid rgba(255,255,255,0.3);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 3px;
+                cursor: pointer;
+                margin-top: 10px;
+            }
+            .update-notification-action:hover {
+                background: rgba(255,255,255,0.3);
+            }
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+
+    document.body.appendChild(notification);
+
+    // Add event listeners
+    const closeBtn = notification.querySelector('.update-notification-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => notification.remove());
+    }
+
+    const actionBtn = notification.querySelector('.update-notification-action');
+    if (actionBtn && buttonAction) {
+        actionBtn.addEventListener('click', buttonAction);
+    }
+
+    // Auto-remove non-persistent notifications after 5 seconds
+    if (!persistent) {
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+}
 
 // Make functions available globally for onclick handlers
 window.removeItem = removeItem;

@@ -25,6 +25,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Remove listeners
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
 
+  // Auto-updater functions
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  restartAndInstall: () => ipcRenderer.invoke('restart-and-install'),
+
+  // Auto-updater events
+  onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
+  onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+  onDownloadProgress: (callback) => ipcRenderer.on('download-progress', callback),
+
   // Node.js APIs (if needed)
   platform: process.platform,
 

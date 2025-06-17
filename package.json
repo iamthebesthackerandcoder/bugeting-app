@@ -29,7 +29,7 @@
   },
   "build": {
     "appId": "com.example.my-electron-app",
-    "productName": "My Electron App",
+    "productName": "Budgeting App",
     "directories": {
       "output": "dist"
     },
@@ -46,15 +46,30 @@
       "icon": "assets/icon.ico"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.icns"
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.finance"
     },
     "linux": {
       "target": "AppImage",
       "icon": "assets/icon.png"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "iamthebesthackerandcoder",
+      "repo": "todo"
     }
   },
   "dependencies": {
-    "chart.js": "^4.5.0"
+    "chart.js": "^4.5.0",
+    "electron-updater": "^6.6.2"
   }
 }
