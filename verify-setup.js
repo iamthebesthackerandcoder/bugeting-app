@@ -21,10 +21,10 @@ console.log('\n🔧 Git Configuration:');
 try {
     const remote = execSync('git remote get-url origin', { encoding: 'utf8' }).trim();
     console.log(`✓ Remote origin: ${remote}`);
-    
+
     const branch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     console.log(`✓ Current branch: ${branch}`);
-    
+
     const status = execSync('git status --porcelain', { encoding: 'utf8' }).trim();
     if (status === '') {
         console.log('✓ Working directory clean');
@@ -77,10 +77,9 @@ console.log('');
 console.log('2. Push code:');
 console.log('   git push -u origin main');
 console.log('');
-console.log('3. Add GitHub token secret:');
-console.log('   - Go to repository Settings → Secrets → Actions');
-console.log('   - Add secret: GH_TOKEN');
-console.log('   - Value: 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');
+console.log('3. GitHub token already configured ✅');
+console.log('   - Auto-updater token embedded in app');
+console.log('   - No additional secrets needed');
 console.log('');
 console.log('4. Create release:');
 console.log('   git tag v1.0.2 && git push --tags');
