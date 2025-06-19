@@ -1590,20 +1590,59 @@ window.addAllRecurringItems = function () {
 
 // Auto-updater setup
 function setupAutoUpdater() {
+    // Listen for manual update check flag
+    window.electronAPI.onManualUpdateCheck(() => {
+        window.manualUpdateCheck = true;
+    });
+
+    // Listen for update status
+    window.electronAPI.onUpdateStatus((event, status) => {
+        if (status.type === 'checking') {
+            setStatus('Checking for updates...');
+        }
+    });
+
     // Listen for update events
     window.electronAPI.onUpdateAvailable((event, info) => {
-        showUpdateNotification('Update Available', `Version ${info.version} is available. It will be downloaded in the background.`);
+        showUpdateNotification(
+            'Update Available',
+            `Version ${info.version} is available. Would you like to download it?`,
+            true,
+            'Download Now',
+            async () => {
+                const result = await window.electronAPI.downloadUpdate();
+                if (!result.success) {
+                    showUpdateNotification('Download Failed', result.message, true);
+                }
+            }
+        );
+    });
+
+    window.electronAPI.onUpdateNotAvailable((event, info) => {
+        // Only show this if user manually checked for updates
+        if (window.manualUpdateCheck) {
+            showUpdateNotification('No Updates', 'You are running the latest version.', false);
+            window.manualUpdateCheck = false;
+        }
+        setStatus('Ready');
+    });
+
+    window.electronAPI.onUpdateError((event, error) => {
+        console.error('Update error:', error);
+        showUpdateNotification('Update Error', `Failed to check for updates: ${error.message}`, true);
+        setStatus('Ready');
     });
 
     window.electronAPI.onDownloadProgress((event, progressObj) => {
         const percent = Math.round(progressObj.percent);
-        showUpdateNotification('Downloading Update', `Download progress: ${percent}%`, false);
+        const speed = Math.round(progressObj.bytesPerSecond / 1024);
+        showUpdateNotification('Downloading Update', `Progress: ${percent}% (${speed} KB/s)`, false);
     });
 
     window.electronAPI.onUpdateDownloaded((event, info) => {
         showUpdateNotification(
             'Update Ready',
-            `Version ${info.version} has been downloaded. Restart the app to apply the update.`,
+            `Version ${info.version} has been downloaded and is ready to install. The app will restart to apply the update.`,
             true,
             'Restart Now',
             () => {

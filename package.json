@@ -1,17 +1,20 @@
 {
-  "name": "my-electron-app",
-  "version": "1.0.0",
-  "description": "A budgeting app built with Electron",
-  "homepage": "https://github.com/iamthebesthackerandcoder/todo#readme",
+  "name": "budgeting-app",
+  "version": "1.0.2",
+  "description": "A comprehensive budgeting app built with Electron",
+  "homepage": "https://github.com/iamthebesthackerandcoder/budgeting-app#readme",
   "bugs": {
-    "url": "https://github.com/iamthebesthackerandcoder/todo/issues"
+    "url": "https://github.com/iamthebesthackerandcoder/budgeting-app/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/iamthebesthackerandcoder/todo.git"
+    "url": "git+https://github.com/iamthebesthackerandcoder/budgeting-app.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": {
+    "name": "Best Hacker and Coder",
+    "email": "your.email@example.com"
+  },
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
@@ -21,6 +24,8 @@
     "build:win": "electron-builder --win",
     "build:mac": "electron-builder --mac",
     "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder --win --mac --linux",
+    "build:publish": "electron-builder --publish=always",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -42,8 +47,16 @@
       "assets/**/*"
     ],
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "publisherName": "Budgeting App Developer"
     },
     "mac": {
       "target": [
@@ -59,17 +72,33 @@
       "category": "public.app-category.finance"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "assets/icon.png"
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "category": "Office"
     },
     "publish": {
       "provider": "github",
       "owner": "iamthebesthackerandcoder",
-      "repo": "todo"
+      "repo": "budgeting-app",
+      "releaseType": "release"
     }
   },
   "dependencies": {
     "chart.js": "^4.5.0",
+    "electron-log": "^5.4.1",
     "electron-updater": "^6.6.2"
   }
 }

@@ -7,32 +7,50 @@ const fs = require('fs');
 let mainWindow;
 
 // Configure auto-updater
-autoUpdater.checkForUpdatesAndNotify();
+// Don't check for updates in development mode
+const isDev = process.argv.includes('--dev') || process.env.NODE_ENV === 'development';
+
+if (!isDev) {
+  // Configure auto-updater settings
+  autoUpdater.autoDownload = false; // Don't auto-download, let user choose
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  // Add better logging
+  autoUpdater.logger = require('electron-log');
+  autoUpdater.logger.transports.file.level = 'info';
+}
 
 // Auto-updater event handlers
 autoUpdater.on('checking-for-update', () => {
   console.log('Checking for update...');
+  if (mainWindow) {
+    mainWindow.webContents.send('update-status', { type: 'checking' });
+  }
 });
 
 autoUpdater.on('update-available', (info) => {
-  console.log('Update available.');
+  console.log('Update available:', info.version);
   if (mainWindow) {
     mainWindow.webContents.send('update-available', info);
   }
 });
 
 autoUpdater.on('update-not-available', (info) => {
-  console.log('Update not available.');
+  console.log('Update not available. Current version:', info.version);
+  if (mainWindow) {
+    mainWindow.webContents.send('update-not-available', info);
+  }
 });
 
 autoUpdater.on('error', (err) => {
-  console.log('Error in auto-updater. ' + err);
+  console.error('Error in auto-updater:', err);
+  if (mainWindow) {
+    mainWindow.webContents.send('update-error', { message: err.message });
+  }
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
-  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  const log_message = `Download progress: ${Math.round(progressObj.percent)}% (${Math.round(progressObj.bytesPerSecond / 1024)} KB/s)`;
   console.log(log_message);
   if (mainWindow) {
     mainWindow.webContents.send('download-progress', progressObj);
@@ -40,7 +58,7 @@ autoUpdater.on('download-progress', (progressObj) => {
 });
 
 autoUpdater.on('update-downloaded', (info) => {
-  console.log('Update downloaded');
+  console.log('Update downloaded:', info.version);
   if (mainWindow) {
     mainWindow.webContents.send('update-downloaded', info);
   }
@@ -99,6 +117,25 @@ app.whenReady().then(() => {
   ensureUserDataDir();
   createWindow();
   createMenu();
+
+  // Check for updates after the app is ready and window is created
+  if (!isDev) {
+    console.log('Production mode: Auto-updater enabled');
+
+    // Initial update check after app startup
+    setTimeout(() => {
+      console.log('Checking for updates...');
+      autoUpdater.checkForUpdatesAndNotify();
+    }, 3000);
+
+    // Set up periodic update checks every 4 hours (14400000 ms)
+    setInterval(() => {
+      console.log('Periodic update check...');
+      autoUpdater.checkForUpdatesAndNotify();
+    }, 4 * 60 * 60 * 1000); // 4 hours in milliseconds
+  } else {
+    console.log('Development mode: Auto-updater disabled');
+  }
 
   app.on('activate', () => {
     // On macOS, re-create a window when the dock icon is clicked
@@ -210,6 +247,20 @@ function createMenu() {
         {
           label: 'Check for Updates',
           click: () => {
+            if (isDev) {
+              dialog.showMessageBox(mainWindow, {
+                type: 'info',
+                title: 'Updates Disabled',
+                message: 'Auto-updates are disabled in development mode.',
+                detail: 'Updates are only available in production builds.'
+              });
+              return;
+            }
+
+            // Set flag for manual update check
+            if (mainWindow) {
+              mainWindow.webContents.send('manual-update-check');
+            }
             autoUpdater.checkForUpdatesAndNotify();
           }
         },
@@ -220,8 +271,8 @@ function createMenu() {
             dialog.showMessageBox(mainWindow, {
               type: 'info',
               title: 'About',
-              message: 'My Electron App',
-              detail: 'A budgeting app built with Electron\nVersion 1.0.0'
+              message: 'Budgeting App',
+              detail: 'A comprehensive budgeting app built with Electron\nVersion 1.0.2\n\nNew in this version:\n• Blue header design\n• Enhanced update notifications\n• 4-hour periodic update checks\n• Cross-platform GitHub Actions'
             });
           }
         }
@@ -323,10 +374,39 @@ ipcMain.handle('show-message-box', async (event, options) => {
 });
 
 // Auto-updater IPC handlers
-ipcMain.handle('check-for-updates', () => {
-  autoUpdater.checkForUpdatesAndNotify();
+ipcMain.handle('check-for-updates', async () => {
+  if (isDev) {
+    return { success: false, message: 'Updates disabled in development mode' };
+  }
+
+  try {
+    const result = await autoUpdater.checkForUpdatesAndNotify();
+    return { success: true, result };
+  } catch (error) {
+    console.error('Check for updates failed:', error);
+    return { success: false, message: error.message };
+  }
+});
+
+ipcMain.handle('download-update', async () => {
+  if (isDev) {
+    return { success: false, message: 'Updates disabled in development mode' };
+  }
+
+  try {
+    await autoUpdater.downloadUpdate();
+    return { success: true };
+  } catch (error) {
+    console.error('Download update failed:', error);
+    return { success: false, message: error.message };
+  }
 });
 
 ipcMain.handle('restart-and-install', () => {
+  if (isDev) {
+    return { success: false, message: 'Updates disabled in development mode' };
+  }
+
   autoUpdater.quitAndInstall();
+  return { success: true };
 });
