@@ -34,10 +34,10 @@ git push -u origin main
 ```
 
 ### Step 3: GitHub Token Already Configured ✅
-**Your GitHub token is already embedded in the app for auto-updates!**
-- The token `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` is configured in the app
+**Your GitHub token is already set up in the .env file!**
+- The token is loaded from `.env` file for auto-updater functionality
 - This allows the auto-updater to check for releases without rate limiting
-- **No additional secrets needed** - GitHub Actions will use the default GITHUB_TOKEN
+- **No additional secrets needed for GitHub Actions** - will use the default GITHUB_TOKEN
 
 ### Step 3: Create Your First Release
 ```bash

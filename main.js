@@ -3,6 +3,9 @@ const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 
+// Load environment variables
+require('dotenv').config();
+
 // Keep a global reference of the window object
 let mainWindow;
 
@@ -16,7 +19,12 @@ if (!isDev) {
   autoUpdater.autoInstallOnAppQuit = true;
 
   // Set GitHub token for private repositories or rate limiting
-  process.env.GH_TOKEN = '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';
+  if (process.env.GH_TOKEN) {
+    process.env.GH_TOKEN = process.env.GH_TOKEN;
+    console.log('GitHub token loaded for auto-updater');
+  } else {
+    console.log('No GitHub token found - auto-updater may be rate limited');
+  }
 
   // Add better logging
   autoUpdater.logger = require('electron-log');

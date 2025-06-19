@@ -52,7 +52,7 @@ git push -u origin main
 
 ### Step 3: Add GitHub Token
 1. Go to your repository Settings → Secrets and variables → Actions
-2. Add secret: `GH_TOKEN` with value: `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`
+2. Add secret: `GH_TOKEN` with your GitHub personal access token
 
 ### Step 4: Create Your First Release
 ```bash
