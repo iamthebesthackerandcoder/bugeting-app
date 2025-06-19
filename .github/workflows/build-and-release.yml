@@ -39,6 +39,8 @@ jobs:
 
     - name: Build application
       run: ${{ matrix.build_cmd }}
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
         
     - name: Upload artifacts (Linux)
       if: matrix.platform == 'linux'
@@ -93,4 +95,4 @@ jobs:
         prerelease: false
         generate_release_notes: true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
