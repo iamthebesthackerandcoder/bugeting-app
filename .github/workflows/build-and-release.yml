@@ -30,8 +30,6 @@ jobs:
       
     - name: Build application
       run: npm run build:all
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Upload artifacts (Ubuntu)
       if: matrix.os == 'ubuntu-latest'

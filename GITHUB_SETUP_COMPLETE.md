@@ -33,13 +33,11 @@ cd /home/shuey/Downloads/my-electron-app
 git push -u origin main
 ```
 
-### Step 3: Add GitHub Token Secret
-1. Go to your repository: **https://github.com/iamthebesthackerandcoder/budgeting-app**
-2. Click **Settings** → **Secrets and variables** → **Actions**
-3. Click **"New repository secret"**
-4. **Name**: `GH_TOKEN`
-5. **Secret**: `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`
-6. Click **"Add secret"**
+### Step 3: GitHub Token Already Configured ✅
+**Your GitHub token is already embedded in the app for auto-updates!**
+- The token `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` is configured in the app
+- This allows the auto-updater to check for releases without rate limiting
+- **No additional secrets needed** - GitHub Actions will use the default GITHUB_TOKEN
 
 ### Step 4: Create Your First Release
 ```bash

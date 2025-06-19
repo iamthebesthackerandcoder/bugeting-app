@@ -15,6 +15,9 @@ if (!isDev) {
   autoUpdater.autoDownload = false; // Don't auto-download, let user choose
   autoUpdater.autoInstallOnAppQuit = true;
 
+  // Set GitHub token for private repositories or rate limiting
+  process.env.GH_TOKEN = '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';
+
   // Add better logging
   autoUpdater.logger = require('electron-log');
   autoUpdater.logger.transports.file.level = 'info';
