@@ -70,7 +70,7 @@ if (fs.existsSync('.github/workflows/build-and-release.yml')) {
 
 console.log('\n🎯 Next Steps:');
 console.log('1. Create repository: https://github.com/new');
-console.log('   - Name: budgeting-app');
+console.log('   - Name: bugeting-app');
 console.log('   - Owner: iamthebesthackerandcoder');
 console.log('   - Public visibility');
 console.log('');

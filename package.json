@@ -2,13 +2,13 @@
   "name": "budgeting-app",
   "version": "1.0.2",
   "description": "A comprehensive budgeting app built with Electron",
-  "homepage": "https://github.com/iamthebesthackerandcoder/budgeting-app#readme",
+  "homepage": "https://github.com/iamthebesthackerandcoder/bugeting-app#readme",
   "bugs": {
-    "url": "https://github.com/iamthebesthackerandcoder/budgeting-app/issues"
+    "url": "https://github.com/iamthebesthackerandcoder/bugeting-app/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamthebesthackerandcoder/budgeting-app.git"
+    "url": "git+https://github.com/iamthebesthackerandcoder/bugeting-app.git"
   },
   "license": "ISC",
   "author": {
@@ -92,7 +92,7 @@
     "publish": {
       "provider": "github",
       "owner": "iamthebesthackerandcoder",
-      "repo": "budgeting-app",
+      "repo": "bugeting-app",
       "releaseType": "release"
     }
   },
