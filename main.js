@@ -283,7 +283,7 @@ function createMenu() {
               type: 'info',
               title: 'About',
               message: 'Budgeting App',
-              detail: 'A comprehensive budgeting app built with Electron\nVersion 1.0.2\n\nNew in this version:\n• Blue header design\n• Enhanced update notifications\n• 4-hour periodic update checks\n• Cross-platform GitHub Actions'
+              detail: 'A comprehensive budgeting app built with Electron\nVersion 1.0.3\n\nNew in this version:\n• Purple header design\n• Fixed GitHub Actions workflow\n• Improved cross-platform builds\n• Reliable auto-updater system'
             });
           }
         }

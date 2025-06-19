@@ -18,9 +18,9 @@ body {
     height: 100vh;
 }
 
-/* Header - Updated in v1.0.2 */
+/* Header - Updated in v1.0.3 */
 .app-header {
-    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    background: linear-gradient(135deg, #9C27B0 0%, #673AB7 100%);
     color: white;
     padding: 1rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
