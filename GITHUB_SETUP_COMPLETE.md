@@ -39,7 +39,7 @@ git push -u origin main
 - This allows the auto-updater to check for releases without rate limiting
 - **No additional secrets needed** - GitHub Actions will use the default GITHUB_TOKEN
 
-### Step 4: Create Your First Release
+### Step 3: Create Your First Release
 ```bash
 cd /home/shuey/Downloads/my-electron-app
 git tag v1.0.2
@@ -92,9 +92,7 @@ git push --tags
 # 2. Push code
 git push -u origin main
 
-# 3. Add GH_TOKEN secret (manual step in GitHub)
-
-# 4. Create release
+# 3. Create release (GitHub token already configured)
 git tag v1.0.2
 git push --tags
 
