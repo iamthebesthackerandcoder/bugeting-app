@@ -30,7 +30,7 @@
     "test-token": "node test-github-token.js"
   },
   "devDependencies": {
-    "electron": "^28.0.0",
+    "electron": "^35.7.5",
     "electron-builder": "^24.9.1"
   },
   "build": {
